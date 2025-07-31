@@ -77,7 +77,6 @@
 // };
 import axios from "axios";
 
-// ✅ Picks from Netlify environment variable
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Auth APIs
@@ -96,7 +95,7 @@ export const uploadCSV = async (formData) => {
   const res = await axios.post(`${BASE_URL}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`, // ✅ Corrected
     },
   });
   return res.data;
@@ -105,7 +104,9 @@ export const uploadCSV = async (formData) => {
 export const getKPIData = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get(`${BASE_URL}/dashboard/kpi`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`, // ✅ Corrected
+    },
   });
   return res.data;
 };
@@ -114,3 +115,4 @@ export const getAISummary = async (rows, kpis) => {
   const res = await axios.post(`${BASE_URL}/ai/summary`, { rows, kpis });
   return res.data.summary;
 };
+
