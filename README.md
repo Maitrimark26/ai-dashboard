@@ -18,6 +18,6 @@ Upload your CSV, get smart KPIs, visualizations, and AI-generated summaries inst
 
 ## Setup
 1. Clone the repo
-2. Add `.env` files in `/client` and `/server`
+2. Add `.env` 
 3. Run frontend and backend separately
 
