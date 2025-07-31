@@ -82,11 +82,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../services/api";
-import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 export default function Register() {
-  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -97,22 +95,21 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const data = await registerUser(form);
 
-      if (data?.token) {
-        setUser(data.user);
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("isLoggedIn", true);
-        toast.success("✅ Registered successfully");
-        navigate("/dashboard");
+      if (data?.message === "User registered successfully") {
+        toast.success("✅ Registered successfully, now login!");
+        navigate("/login"); // ✅ Go to login page instead of dashboard
       } else {
         toast.error("❌ Registration failed. Try again.");
       }
     } catch (err) {
       console.error("Registration error:", err);
       const msg =
-        err?.response?.data?.message || "⚠️ Something went wrong during registration.";
+        err?.response?.data?.message ||
+        "⚠️ Something went wrong during registration.";
       toast.error(msg);
     } finally {
       setLoading(false);
