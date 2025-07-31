@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { uploadCSV } from "../services/api";
@@ -11,45 +12,32 @@ export default function FileUploader({ onUploadComplete }) {
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleUpload = async () => {
-    const token = localStorage.getItem("token");
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    // 🔐 Check if user is logged in
-    if (!token || isLoggedIn !== "true") {
-      toast.error("🔐 Please login to upload your CSV");
-      navigate("/login");
-      return;
-    }
-
-    if (!file) {
-      toast.error("📄 Please select a CSV file");
-      return;
-    }
+    if (!file) return toast.error("Please select a CSV file");
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const res = await uploadCSV(formData);
-      toast.success("✅ CSV uploaded successfully");
+      toast.success("CSV uploaded successfully");
 
-      // Save data in local storage
       localStorage.setItem("uploadedData", JSON.stringify(res.rows));
       localStorage.setItem("kpis", JSON.stringify(res.kpis));
       setUploaded(true);
 
-      // Notify parent if needed
       if (onUploadComplete) onUploadComplete(res);
     } catch (err) {
-      toast.error("❌ Upload failed. Please try again.");
+      toast.error("Upload failed");
       console.error("❌ Upload error:", err);
     }
   };
 
   return (
-    <div className="">
+    <div
+      className="6"
+    >
       <div className="w-full max-w-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 space-y-6 text-center animate-fade-in">
-        {/* Heading */}
+        {/* Animated Heading */}
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2 animate-pulse">
           🚀 Unlock AI Insights
         </h1>
@@ -59,7 +47,7 @@ export default function FileUploader({ onUploadComplete }) {
           <span className="text-indigo-600">AI-powered dashboard</span> in seconds!
         </p>
 
-        {/* File Input */}
+        {/* Upload Input */}
         <input
           type="file"
           accept=".csv"
@@ -80,28 +68,25 @@ export default function FileUploader({ onUploadComplete }) {
           📂 Upload CSV
         </button>
 
-        {/* Go to Dashboard if uploaded */}
+        {/* Dashboard Button */}
         {uploaded && (
           <button
             onClick={() => {
-              navigate("/dashboard");
+              const isLoggedIn = localStorage.getItem("isLoggedIn");
+              if (isLoggedIn) {
+                navigate("/dashboard");
+              } else {
+                toast.error("Please login to access the dashboard");
+                navigate("/login");
+              }
             }}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
           >
             📊 Go to Dashboard
           </button>
         )}
-
-        {/* Optional Login Button (if user is not logged in) */}
-        {!localStorage.getItem("isLoggedIn") && (
-          <button
-            onClick={() => navigate("/login")}
-            className="w-full border border-indigo-600 text-indigo-700 hover:bg-indigo-50 font-bold py-2 px-6 rounded-lg transition duration-300"
-          >
-            🔐 Login to continue
-          </button>
-        )}
       </div>
     </div>
   );
 }
+
