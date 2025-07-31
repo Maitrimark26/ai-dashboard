@@ -98,10 +98,11 @@ export default function Register() {
 
     try {
       const data = await registerUser(form);
+      console.log("📦 Register API Response:", data);
 
-      if (data?.message === "User registered successfully") {
+      if (data?.token || data?.message?.toLowerCase().includes("success")) {
         toast.success("✅ Registered successfully, now login!");
-        navigate("/login"); // ✅ Go to login page instead of dashboard
+        navigate("/login"); // Go to login page
       } else {
         toast.error("❌ Registration failed. Try again.");
       }
